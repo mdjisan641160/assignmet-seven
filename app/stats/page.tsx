@@ -5,22 +5,23 @@ import { Phone, MessageSquare, Video, ArrowLeft, Calendar } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 
+// ১. সরাসরি JSON ফাইলটি ইমপোর্ট করা হলো (বাকি সব কোড সেম রাখার জন্য)
+import friendsData from '../../../public/friends.json'; 
+
 export default function FriendDetails() {
   const { id } = useParams();
   const [friend, setFriend] = useState<any>(null);
 
   useEffect(() => {
-    // JSON থেকে নির্দিষ্ট বন্ধুর ডেটা খুঁজে বের করা
-    fetch('/friends.json')
-      .then(res => res.json())
-      .then(data => {
-        const found = data.find((f: any) => f.id === parseInt(id as string));
-        setFriend(found);
-      });
+    // ২. fetch এর বদলে ইমপোর্ট করা ডাটা থেকে নির্দিষ্ট বন্ধুকে খুঁজে বের করা
+    const found = friendsData.find((f: any) => f.id === parseInt(id as string));
+    setFriend(found);
   }, [id]);
 
   const handleInteraction = (type: string) => {
-    // টাইমলাইন ডেটা লোকাল স্টোরেজে সেভ করা
+    // ৩. localStorage ব্যবহারের আগে window চেক (Vercel বিল্ড সেফটি)
+    if (typeof window === 'undefined') return;
+
     const newLog = {
       id: Date.now(),
       friendId: id,
